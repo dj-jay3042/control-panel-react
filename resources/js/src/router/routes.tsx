@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 
-
 const componentMap = {
     'Analytics': lazy(() => import('../pages/Analytics')),
     'Finance': lazy(() => import('../pages/Finance')),

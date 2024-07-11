@@ -11,7 +11,7 @@ const errorToster = (message) => {
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000,
-        showCloseButton: true,
+        showCloseButton: false,
         customClass: {
             popup: `color-danger`,
         },

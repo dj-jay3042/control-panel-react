@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Login;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -54,7 +55,7 @@ class LoginController extends Controller
         // Attempt to login
         $credentials = $request->only('username', 'password');
 
-        $user = User::where("userLogin", $credentials["username"])->select("userId", "userPassword", "userAccessToken", "userRefreshToken", "userLoginOtp")->first();
+        $user = User::where("userLogin", $credentials["username"])->select("userId", "userPassword", "userAccessToken", "userRefreshToken", "userLoginOtp", "userEmail")->first();
         if ($user) {
             // Validate User
             if (sha1($credentials["password"]) === $user->userPassword) {
@@ -67,7 +68,9 @@ class LoginController extends Controller
                 // Update the otp in the database and send mail for otp
                 User::where("userId", $user["userId"])->update(["userLoginOtp" => $otp]);
                 // TODO: Send mail for otp
-                return response()->json(["otpSent" => true], 200);
+                $mail = new MailService();
+                $otpSent = $mail->sendMail($user->userEmail, 1, ["loginId" => $user->userLogin, "otp" => $otp]);
+                return response()->json(["otpSent" => $otpSent], 200);
             }
             return response()->json(["message" => "Incorrect Password!"], 401);
         }
