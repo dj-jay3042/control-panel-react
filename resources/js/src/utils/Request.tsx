@@ -1,5 +1,22 @@
 // src/axiosService.js
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+const errorToster = (message) => {
+    MySwal.fire({
+        title: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        showCloseButton: true,
+        customClass: {
+            popup: `color-danger`,
+        },
+    });
+};
 
 // Create an Axios instance
 const axiosInstance = axios.create({
@@ -50,28 +67,29 @@ export const deleteRequest = async (url, params = {}, headers = {}) => {
 };
 
 // Function to handle login
-export const login = async (username, password) => {
+export const login = async (username, password, otp) => {
     try {
-        const response = await axiosInstance.post('/login', { username, password });
-        const token = response.data.token;
-        localStorage.setItem('token', token);
-        return token;
+        const response = await axiosInstance.post('/api/login', { username, password, otp });
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        return true;
     } catch (error) {
         handleError(error);
+        return false;
     }
 };
 
 // Function to check if user is logged in
 export const isLoggedIn = () => {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('accessToken');
 };
 
 // Error handling function
 const handleError = (error) => {
     if (error.response) {
-        console.error('Error Response:', error.response.data);
-        console.error('Error Status:', error.response.status);
-        console.error('Error Headers:', error.response.headers);
+        errorToster(error.response.data.message);
     } else if (error.request) {
         console.error('Error Request:', error.request);
     } else {

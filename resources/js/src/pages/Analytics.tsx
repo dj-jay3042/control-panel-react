@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import ReactApexChart from 'react-apexcharts';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../store';
@@ -6,6 +6,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import Dropdown from '../components/Dropdown';
 import { useEffect } from 'react';
 import { setPageTitle } from '../store/themeConfigSlice';
+import { isLoggedIn } from '../utils/Request';
+
 
 const Analytics = () => {
     const dispatch = useDispatch();
@@ -388,7 +390,7 @@ const Analytics = () => {
                                     <div className="text-[#f8538d] text-lg">423,964</div>
                                 </div>
 
-                                <ReactApexChart series={totalVisit.series} options={totalVisit.options} type="line" height={58} className="overflow-hidden"/>
+                                <ReactApexChart series={totalVisit.series} options={totalVisit.options} type="line" height={58} className="overflow-hidden" />
                             </div>
 
                             <div>
@@ -397,7 +399,7 @@ const Analytics = () => {
                                     <div className="text-[#f8538d] text-lg">7,929</div>
                                 </div>
 
-                                <ReactApexChart series={paidVisit.series} options={paidVisit.options} type="line" height={58} className="overflow-hidden"/>
+                                <ReactApexChart series={paidVisit.series} options={paidVisit.options} type="line" height={58} className="overflow-hidden" />
                             </div>
                         </div>
                     </div>
@@ -534,7 +536,7 @@ const Analytics = () => {
                             </div>
                         </div>
 
-                        <ReactApexChart options={uniqueVisitorSeries.options} series={uniqueVisitorSeries.series} type="bar" height={360} className="overflow-hidden"/>
+                        <ReactApexChart options={uniqueVisitorSeries.options} series={uniqueVisitorSeries.series} type="bar" height={360} className="overflow-hidden" />
                     </div>
 
                     <div className="panel h-full">

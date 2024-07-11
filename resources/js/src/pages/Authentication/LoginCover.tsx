@@ -5,11 +5,13 @@ import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import Dropdown from '../../components/Dropdown';
 import { IRootState } from '../../store';
 import i18next from 'i18next';
+import { login, postRequest } from '../../utils/Request';
+import { handleTextbox } from '../../utils/Functions';
 
 const LoginCover = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('Login Cover'));
+        dispatch(setPageTitle('Login'));
     });
     const navigate = useNavigate();
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
@@ -23,9 +25,29 @@ const LoginCover = () => {
         }
     };
     const [flag, setFlag] = useState(themeConfig.locale);
+    const [username, setUsername] = useState();
+    const [password, setPassword] = useState();
+    const [otpSent, setOtpSent] = useState();
+    const [otp, setOtp] = useState();
 
-    const submitForm = () => {
-        navigate('/');
+    const sendOtp = async () => {
+        const response = await postRequest("/api/sendOtp", { username, password });
+        setOtpSent(response.otpSent);
+    }
+
+    const handleKeyPress = (event) => {
+        const charCode = event.charCode;
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    };
+
+    const submitForm = async (event) => {
+        event.preventDefault();
+        const loggedIn = await login(username, password, otp);
+        if (loggedIn) {
+            navigate('/');
+        }
     };
 
     return (
@@ -42,8 +64,13 @@ const LoginCover = () => {
                     <div className="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
                         <div className="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
                         <div className="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
-                            <Link to="/" className="w-48 block lg:w-72 ms-10">
-                                <img src="/assets/images/auth/logo-white.svg" alt="Logo" className="w-full" />
+                            <Link to="/" className="w-48 block lg:w-80 ms-10">
+                                <table className='mx-auto'>
+                                    <tr>
+                                        <td><img src="/favicon.png" alt="Logo" className="mx-auto w-30" /></td>
+                                        <td><h1 className="text-3xl font-extrabold uppercase !leading-snug md:text-4xl text-white-light">Admin&nbsp;Panel</h1></td>
+                                    </tr>
+                                </table>
                             </Link>
                             <div className="mt-24 hidden w-full max-w-[430px] lg:block">
                                 <img src="/assets/images/auth/login.svg" alt="Cover Image" className="w-full" />
@@ -52,8 +79,7 @@ const LoginCover = () => {
                     </div>
                     <div className="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
                         <div className="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
-                            <Link to="/" className="w-8 block lg:hidden">
-                                <img src="/assets/images/logo.svg" alt="Logo" className="mx-auto w-10" />
+                            <Link to="/" className="w-48 block lg:w-80 ms-10">
                             </Link>
                             <div className="dropdown ms-auto w-max">
                                 <Dropdown
@@ -109,7 +135,7 @@ const LoginCover = () => {
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Email" type="text" placeholder="Enter Email" onChange={handleTextbox(setUsername)} className="form-input ps-10 placeholder:text-white-dark" required />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                                 <path
@@ -128,7 +154,7 @@ const LoginCover = () => {
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Password" type="password" placeholder="Enter Password" onChange={handleTextbox(setPassword)} className="form-input ps-10 placeholder:text-white-dark" required />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                                 <path
@@ -156,15 +182,52 @@ const LoginCover = () => {
                                         </span>
                                     </div>
                                 </div>
+                                {otpSent ? (<div>
+                                    <label htmlFor="Otp">Otp</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="Otp" type="text" pattern="[0-9]*" placeholder="Enter Otp" onChange={handleTextbox(setOtp)} onKeyPress={handleKeyPress} className="form-input ps-10 placeholder:text-white-dark" minLength={6} maxLength={6} required />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                                <path
+                                                    opacity="0.5"
+                                                    d="M1.5 12C1.5 9.87868 1.5 8.81802 2.15901 8.15901C2.81802 7.5 3.87868 7.5 6 7.5H12C14.1213 7.5 15.182 7.5 15.841 8.15901C16.5 8.81802 16.5 9.87868 16.5 12C16.5 14.1213 16.5 15.182 15.841 15.841C15.182 16.5 14.1213 16.5 12 16.5H6C3.87868 16.5 2.81802 16.5 2.15901 15.841C1.5 15.182 1.5 14.1213 1.5 12Z"
+                                                    fill="currentColor"
+                                                />
+                                                <path
+                                                    d="M6 12.75C6.41421 12.75 6.75 12.4142 6.75 12C6.75 11.5858 6.41421 11.25 6 11.25C5.58579 11.25 5.25 11.5858 5.25 12C5.25 12.4142 5.58579 12.75 6 12.75Z"
+                                                    fill="currentColor"
+                                                />
+                                                <path
+                                                    d="M9 12.75C9.41421 12.75 9.75 12.4142 9.75 12C9.75 11.5858 9.41421 11.25 9 11.25C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75Z"
+                                                    fill="currentColor"
+                                                />
+                                                <path
+                                                    d="M12.75 12C12.75 12.4142 12.4142 12.75 12 12.75C11.5858 12.75 11.25 12.4142 11.25 12C11.25 11.5858 11.5858 11.25 12 11.25C12.4142 11.25 12.75 11.5858 12.75 12Z"
+                                                    fill="currentColor"
+                                                />
+                                                <path
+                                                    d="M5.0625 6C5.0625 3.82538 6.82538 2.0625 9 2.0625C11.1746 2.0625 12.9375 3.82538 12.9375 6V7.50268C13.363 7.50665 13.7351 7.51651 14.0625 7.54096V6C14.0625 3.20406 11.7959 0.9375 9 0.9375C6.20406 0.9375 3.9375 3.20406 3.9375 6V7.54096C4.26488 7.51651 4.63698 7.50665 5.0625 7.50268V6Z"
+                                                    fill="currentColor"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>) : ("")}
                                 <div>
                                     <label className="flex cursor-pointer items-center">
                                         <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
                                         <span className="text-white-dark">Subscribe to weekly newsletter</span>
                                     </label>
                                 </div>
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    Sign in
-                                </button>
+                                {otpSent ? (
+                                    <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                        Sign in
+                                    </button>
+                                ) : (
+                                    <button type="button" onClick={sendOtp} className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                        Send Otp
+                                    </button>
+                                )}
                             </form>
 
                             <div className="relative my-7 text-center md:mb-9">
@@ -270,7 +333,7 @@ const LoginCover = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

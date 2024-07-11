@@ -8,15 +8,13 @@ CREATE TABLE tblRoutes (
     routeIsPrivate char(1) NOT NULL default '0',
     routeIsActive char(1) NOT NULL default '1'
 );
-
 CREATE TABLE tblUserRoles (
     roleId int primary key AUTO_INCREMENT,
     roleName varchar(32) NOT NULL,
     roleDescription varchar(128) NOT NULL,
-    roleAccessDetails JSON not null,
+    roleAccessDetails JSON NOT NULL,
     roleIsActive char(1) NOT NULL default '1'
 );
-
 CREATE TABLE tblUsers (
     userId int primary key AUTO_INCREMENT,
     userFirstName varchar(64) NOT NULL,
@@ -38,7 +36,6 @@ CREATE TABLE tblUsers (
     userCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP,
     FOREIGN KEY (userRoleId) REFERENCES tblUserRoles (roleId)
 );
-
 CREATE TABLE tblUserVerificationDetails (
     verificationId int primary key AUTO_INCREMENT,
     verificationUserId int NOT NULL,
@@ -49,7 +46,6 @@ CREATE TABLE tblUserVerificationDetails (
     verificationCretedDate datetime NOT NULL default CURRENT_TIMESTAMP,
     FOREIGN KEY (verificationUserId) REFERENCES tblUsers (userId)
 );
-
 CREATE TABLE tblContacts (
     contactId int primary key AUTO_INCREMENT,
     contactFirstName varchar(64) NOT NULL,
@@ -61,14 +57,12 @@ CREATE TABLE tblContacts (
     contactAdditionaDetails varchar(255),
     contactIsActive char(1) NOT NULL default '1'
 );
-
 CREATE TABLE tblEmailsDetails (
     emailId int primary key AUTO_INCREMENT,
     emailAddress varchar(255) NOT NULL,
     emailIsActive char(1) NOT NULL default '1',
-    contactId int,
+    contactId int
 );
-
 CREATE TABLE tblWhatsappClients (
     clientId int primary key AUTO_INCREMENT,
     clientName varchar(64) NOT NULL,
@@ -81,19 +75,17 @@ CREATE TABLE tblWhatsappClients (
     clientIsDeleted char(1) NOT NULL default '0',
     clientCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP
 );
-
 CREATE TABLE tblBankDetails (
     bankId int primary key AUTO_INCREMENT,
     bankName varchar(128) NOT NULL,
     bankAccountNumber char(18) NOT NULL,
     bankAddress JSON NOT NULL,
     bankIfscCode char(11) NOT NULL,
-    bankAccountMinimumAmount decimal(10,2) NOT NULL,
-    bankAccountBalance decimal(13,2),
+    bankAccountMinimumAmount decimal(10, 2) NOT NULL,
+    bankAccountBalance decimal(13, 2),
     bankContactId int NOT NULL,
-    bankAccountIsActive char(1) NOT NULL default '1',
+    bankAccountIsActive char(1) NOT NULL default '1'
 );
-
 CREATE TABLE tblCardDetails (
     cardId int primary key AUTO_INCREMENT,
     cardNumber char(16) NOT NULL,
@@ -102,10 +94,8 @@ CREATE TABLE tblCardDetails (
     cardPassword char(6) NOT NULL,
     cardHolderName varchar(64) NOT NULL,
     cardContactId int NOT NULL,
-    carIsActive char(1) NOT NULL
-    cardCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP
+    carIsActive char(1) NOT NULL cardCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP
 );
-
 CREATE TABLE tblUpiDetails (
     upiId int primary key AUTO_INCREMENT,
     upiName varchar(64) NOT NULL,
@@ -116,26 +106,23 @@ CREATE TABLE tblUpiDetails (
     upiIsActive char(1) NOT NULL default '1',
     upiCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP
 );
-
 CREATE TABLE tblPaymentMethods (
-    paymentMethodId int primary key AUTO_INCREMENT,
+    paymentMethodId int PRIMARY KEY AUTO_INCREMENT,
     paymentMethodName varchar(32) NOT NULL,
-    paymentMethodType char(1) NOT NULL default '0',
-    paymentMethodCharge decimal(10,2) NOT NULL default 0.00,
+    paymentMethodType char(1) NOT NULL DEFAULT '0',
+    paymentMethodCharge decimal(10, 2) NOT NULL DEFAULT 0.00,
     paymentMethodBankId int NOT NULL,
-    paymentMethodIsActive char(1) NOT NULL default '1',
-    FOREIGN KEY paymentMethodBankId REFERENCES tblBankDetails (bankId)
+    paymentMethodIsActive char(1) NOT NULL DEFAULT '1',
+    FOREIGN KEY (paymentMethodBankId) REFERENCES tblBankDetails (bankId)
 );
-
 CREATE TABLE tblTransections (
     transactionId int primary key AUTO_INCREMENT,
     transactionUserId int NOT NULL,
     transectionPaymentMeyhodId int NOT NULL,
     transectionTitle varchar(128) NOT NULL,
-    transectionAmount decimal(13,2) NOT NULL,
-    transectionType char(1) NOT NULL default '0',
+    transectionAmount decimal(13, 2) NOT NULL,
+    transectionType char(1) NOT NULL default '0'
 );
-
 CREATE TABLE tblEmailTemplates (
     templateId int primary key AUTO_INCREMENT,
     templateName varchar(64) NOT NULL,
@@ -143,7 +130,6 @@ CREATE TABLE tblEmailTemplates (
     templateBody text NOT NULL,
     templateIsActive char(1) NOT NULL default '1'
 );
-
 CREATE TABLE tblWhatsappTemplates (
     templateId int primary key AUTO_INCREMENT,
     templateName varchar(64) NOT NULL,
@@ -154,7 +140,6 @@ CREATE TABLE tblWhatsappTemplates (
     templateIsActive char(1) NOT NULL default '1',
     templateCreatedDate datetime NOT NULL default CURRENT_TIMESTAMP
 );
-
 CREATE TABLE tblMails (
     mailId int primary key AUTO_INCREMENT,
     mailFrom varchar(255) NOT NULL,
@@ -164,15 +149,14 @@ CREATE TABLE tblMails (
     mailBody text NOT NULL,
     mailType char(1) NOT NULL default '0',
     mailHasAttachments int,
-    mailParentId int,
+    mailParentId int
 );
-
 CREATE TABLE tblMailAttachments (
     attachmentId int primary key AUTO_INCREMENT,
     attachmentMailId int NOT NULL,
     attachmentFileName varchar(255) NOT NULL,
     attachmentFilePath varchar(128) NOT NULL,
-    attachmentSize decimal(6,2) NOT NULL,
+    attachmentSize decimal(6, 2) NOT NULL,
     attachmentSizeUnit char(2) not null default 'kb',
     attachmentIsDeleted char(1) NOT NULL default '0',
     FOREIGN KEY (attachmentMailId) REFERENCES tblMails (mailId)
