@@ -161,3 +161,14 @@ CREATE TABLE tblMailAttachments (
     attachmentIsDeleted char(1) NOT NULL default '0',
     FOREIGN KEY (attachmentMailId) REFERENCES tblMails (mailId)
 );
+CREATE TABLE tblMenuItems (
+    menuId int primary key AUTO_INCREMENT,
+    menuTitle varchar(64) NOT NULL,
+    menuSvg text,
+    menuType char(1) NOT NULL default '1',
+    menuRouteId int NOT NULL,
+    menuParentId int,
+    menuIsActive char(1) NOT NULL default '1',
+    FOREIGN KEY (menuRouteId) REFERENCES tblRoutes (routeId),
+    FOREIGN KEY (menuParentId) REFERENCES tblMenuItems (menuId)
+);

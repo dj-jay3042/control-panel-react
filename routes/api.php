@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Data\DataController;
 use App\Http\Controllers\Route\RouteController;
 use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Menu\MenuController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::get("routes", [RouteController::class, "getRoutes"]);
 Route::post("sendOtp", [LoginController::class, "sendOtp"]);
 Route::post("login", [LoginController::class, "login"]);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post("getMenuItems", [MenuController::class, "getMenuItems"]);
+Route::middleware('checkAccessToken')->group(function () {
+    Route::post("contactData", [DataController::class, "getContactDetails"]);
 });

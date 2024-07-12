@@ -3,9 +3,9 @@ import i18next from 'i18next';
 import themeConfig from '../theme.config';
 
 const defaultState = {
-    isDarkMode: false,
+    isDarkMode: true,
     mainLayout: 'app',
-    theme: 'light',
+    theme: 'dark',
     menu: 'vertical',
     layout: 'full',
     rtlClass: 'ltr',
@@ -31,20 +31,20 @@ const defaultState = {
         { code: 'sv', name: 'Swedish' },
         { code: 'tr', name: 'Turkish' },
     ],
-    semidark: false,
+    semidark: true,
 };
 
 const initialState = {
-    theme: localStorage.getItem('theme') || themeConfig.theme,
+    theme: localStorage.getItem('theme') || "dark",
     menu: localStorage.getItem('menu') || themeConfig.menu,
     layout: localStorage.getItem('layout') || themeConfig.layout,
     rtlClass: localStorage.getItem('rtlClass') || themeConfig.rtlClass,
     animation: localStorage.getItem('animation') || themeConfig.animation,
     navbar: localStorage.getItem('navbar') || themeConfig.navbar,
     locale: localStorage.getItem('i18nextLng') || themeConfig.locale,
-    isDarkMode: false,
+    isDarkMode: true,
     sidebar: localStorage.getItem('sidebar') || defaultState.sidebar,
-    semidark: localStorage.getItem('semidark') || themeConfig.semidark,
+    semidark: localStorage.getItem('semidark') || true,
     languageList: [
         { code: 'zh', name: 'Chinese' },
         { code: 'da', name: 'Danish' },

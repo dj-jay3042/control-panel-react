@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
+import { setPageTitle, toggleRTL, toggleSemidark, toggleTheme } from '../../store/themeConfigSlice';
 import Dropdown from '../../components/Dropdown';
 import { IRootState } from '../../store';
 import i18next from 'i18next';
@@ -12,10 +12,13 @@ const LoginCover = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Login'));
+        dispatch(toggleSemidark(true));
+        dispatch(toggleTheme('dark'));
     });
     const navigate = useNavigate();
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
+
     const setLocale = (flag: string) => {
         setFlag(flag);
         if (flag.toLowerCase() === 'ae') {
@@ -27,7 +30,9 @@ const LoginCover = () => {
     const [flag, setFlag] = useState(themeConfig.locale);
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
-    const [otpSendig, setOtpSending] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [otpSending, setOtpSending] = useState(false);
+    const [loginInitiated, setLoginInitiated] = useState(false);
     const [otpSent, setOtpSent] = useState();
     const [otp, setOtp] = useState();
 
@@ -45,9 +50,15 @@ const LoginCover = () => {
         }
     };
 
+    const handleTogglePassword = () => {
+        setShowPassword(!showPassword);
+    };
+
     const submitForm = async (event) => {
         event.preventDefault();
+        setLoginInitiated(true);
         const loggedIn = await login(username, password, otp);
+        setLoginInitiated(false);
         if (loggedIn) {
             navigate('/');
         }
@@ -69,10 +80,12 @@ const LoginCover = () => {
                         <div className="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
                             <Link to="/" className="w-48 block lg:w-80 ms-10">
                                 <table className='mx-auto'>
-                                    <tr>
-                                        <td><img src="/favicon.png" alt="Logo" className="mx-auto w-30" /></td>
-                                        <td><h1 className="text-3xl font-extrabold uppercase !leading-snug md:text-4xl text-white-light">Admin&nbsp;Panel</h1></td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <td><img src="/favicon.png" alt="Logo" className="mx-auto w-30" /></td>
+                                            <td><h1 className="text-3xl font-extrabold uppercase !leading-snug md:text-4xl text-white-light">Admin&nbsp;Panel</h1></td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </Link>
                             <div className="mt-24 hidden w-full max-w-[430px] lg:block">
@@ -138,7 +151,7 @@ const LoginCover = () => {
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="text" placeholder="Enter Email" onChange={handleTextbox(setUsername)} className="form-input ps-10 placeholder:text-white-dark" required />
+                                        <input id="Email" type="text" placeholder="Enter Email" onChange={handleTextbox(setUsername)} className="form-input ps-10 placeholder:text-white-dark" required tabIndex={1} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                                 <path
@@ -157,7 +170,7 @@ const LoginCover = () => {
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" onChange={handleTextbox(setPassword)} className="form-input ps-10 placeholder:text-white-dark" required />
+                                        <input id="Password" type={showPassword ? "text" : "password"} placeholder="Enter Password" onChange={handleTextbox(setPassword)} className="form-input ps-10 placeholder:text-white-dark" required tabIndex={2} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                                 <path
@@ -182,55 +195,65 @@ const LoginCover = () => {
                                                     fill="currentColor"
                                                 />
                                             </svg>
+                                        </span>
+                                        <span className="absolute end-4 top-1/2 -translate-y-1/2">
+                                            {showPassword ? (
+                                                <span onClick={handleTogglePassword}>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C4.97196 6.49956 7.81811 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957Z" stroke="currentColor" stroke-width="1.5" />
+                                                        <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5" />
+                                                    </svg>
+                                                </span>
+                                            ) : (
+                                                <span onClick={handleTogglePassword}>
+                                                    <svg width="16" height="12" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M1.68936 0.704561C1.52619 0.323838 1.08528 0.147475 0.704561 0.310641C0.323838 0.473808 0.147475 0.914717 0.310641 1.29544L1.68936 0.704561ZM14.5872 7.3287L14.3125 6.63082L14.5872 7.3287ZM8.04145 7.73774C8.26736 7.39055 8.16904 6.92597 7.82185 6.70006C7.47466 6.47416 7.01008 6.57247 6.78417 6.91966L8.04145 7.73774ZM5.37136 9.09096C5.14545 9.43815 5.24377 9.90273 5.59096 10.1286C5.93815 10.3545 6.40273 10.2562 6.62864 9.90904L5.37136 9.09096ZM21.6894 1.29544C21.8525 0.914717 21.6762 0.473808 21.2954 0.310641C20.9147 0.147475 20.4738 0.323838 20.3106 0.704561L21.6894 1.29544ZM18 5.12884L17.4867 4.58199V4.58199L18 5.12884ZM18.9697 7.15917C19.2626 7.45206 19.7374 7.45206 20.0303 7.15917C20.3232 6.86628 20.3232 6.3914 20.0303 6.09851L18.9697 7.15917ZM10.25 10.5C10.25 10.9142 10.5858 11.25 11 11.25C11.4142 11.25 11.75 10.9142 11.75 10.5H10.25ZM15.3714 9.90904C15.5973 10.2562 16.0619 10.3545 16.409 10.1286C16.7562 9.90273 16.8545 9.43815 16.6286 9.09096L15.3714 9.90904ZM4.53033 5.65917C4.82322 5.36627 4.82322 4.8914 4.53033 4.59851C4.23744 4.30561 3.76256 4.30561 3.46967 4.59851L4.53033 5.65917ZM1.96967 6.09851C1.67678 6.3914 1.67678 6.86627 1.96967 7.15917C2.26256 7.45206 2.73744 7.45206 3.03033 7.15917L1.96967 6.09851ZM11 7.25C7.77611 7.25 5.46133 5.6446 3.9246 3.98966C3.15645 3.16243 2.59325 2.33284 2.22259 1.71014C2.03769 1.3995 1.90187 1.14232 1.8134 0.965371C1.76919 0.876955 1.73689 0.808747 1.71627 0.764114C1.70597 0.741803 1.69859 0.725401 1.69411 0.71533C1.69187 0.710295 1.69036 0.706845 1.68957 0.705032C1.68917 0.704125 1.68896 0.703628 1.68892 0.703548C1.68891 0.703507 1.68893 0.703571 1.68901 0.703739C1.68904 0.703823 1.68913 0.704029 1.68915 0.704071C1.68925 0.704302 1.68936 0.704561 1 1C0.310641 1.29544 0.310775 1.29575 0.31092 1.29609C0.310984 1.29624 0.311141 1.2966 0.311269 1.2969C0.311524 1.29749 0.311827 1.2982 0.312176 1.299C0.312874 1.30062 0.31376 1.30266 0.314833 1.30512C0.316979 1.31003 0.319875 1.31662 0.323526 1.32483C0.330827 1.34125 0.34115 1.36415 0.354526 1.39311C0.381273 1.45102 0.420263 1.5332 0.471758 1.63619C0.574692 1.84206 0.727935 2.13175 0.933655 2.47736C1.34425 3.16716 1.96855 4.08757 2.8254 5.01034C4.53867 6.8554 7.22389 8.75 11 8.75V7.25ZM14.3125 6.63082C13.3421 7.01276 12.2417 7.25 11 7.25V8.75C12.4382 8.75 13.7246 8.47424 14.8619 8.02658L14.3125 6.63082ZM6.78417 6.91966L5.37136 9.09096L6.62864 9.90904L8.04145 7.73774L6.78417 6.91966ZM21 1C20.3106 0.704561 20.3107 0.70441 20.3108 0.704267C20.3108 0.70423 20.3108 0.704096 20.3109 0.704023C20.3109 0.703877 20.311 0.703764 20.311 0.703683C20.3111 0.703523 20.3111 0.703494 20.3111 0.703595C20.311 0.703798 20.3107 0.704522 20.3101 0.705758C20.309 0.70823 20.307 0.712749 20.3041 0.719241C20.2983 0.732226 20.2889 0.753092 20.2758 0.781246C20.2495 0.837568 20.2086 0.922954 20.1526 1.03267C20.0406 1.25227 19.869 1.56831 19.6354 1.9432C19.1669 2.69516 18.4563 3.67197 17.4867 4.58199L18.5133 5.67569C19.6023 4.65348 20.3917 3.56587 20.9085 2.73646C21.1676 2.32068 21.36 1.9668 21.4889 1.71415C21.5533 1.58775 21.602 1.48643 21.6353 1.41507C21.6519 1.37939 21.6647 1.35118 21.6737 1.33104C21.6782 1.32097 21.6818 1.31292 21.6844 1.30696C21.6857 1.30398 21.6867 1.30153 21.6876 1.2996C21.688 1.29864 21.6883 1.29781 21.6886 1.29712C21.6888 1.29677 21.6889 1.29646 21.689 1.29618C21.6891 1.29604 21.6892 1.29585 21.6892 1.29578C21.6893 1.29561 21.6894 1.29544 21 1ZM17.4867 4.58199C16.6277 5.38825 15.5739 6.13433 14.3125 6.63082L14.8619 8.02658C16.3355 7.44656 17.5466 6.58302 18.5133 5.67569L17.4867 4.58199ZM17.4697 5.65917L18.9697 7.15917L20.0303 6.09851L18.5303 4.59851L17.4697 5.65917ZM10.25 8V10.5H11.75V8H10.25ZM13.9586 7.73774L15.3714 9.90904L16.6286 9.09096L15.2158 6.91966L13.9586 7.73774ZM3.46967 4.59851L1.96967 6.09851L3.03033 7.15917L4.53033 5.65917L3.46967 4.59851Z" fill="currentColor" />
+                                                    </svg>
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
                                 </div>
                                 {otpSent ? (<div>
                                     <label htmlFor="Otp">Otp</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Otp" type="text" pattern="[0-9]*" placeholder="Enter Otp" onChange={handleTextbox(setOtp)} onKeyPress={handleKeyPress} className="form-input ps-10 placeholder:text-white-dark" minLength={6} maxLength={6} required />
+                                        <input id="Otp" type="text" pattern="[0-9]*" placeholder="Enter Otp" onChange={handleTextbox(setOtp)} onKeyPress={handleKeyPress} className="form-input ps-10 placeholder:text-white-dark" minLength={6} maxLength={6} required tabIndex={3} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                                <path
-                                                    opacity="0.5"
-                                                    d="M1.5 12C1.5 9.87868 1.5 8.81802 2.15901 8.15901C2.81802 7.5 3.87868 7.5 6 7.5H12C14.1213 7.5 15.182 7.5 15.841 8.15901C16.5 8.81802 16.5 9.87868 16.5 12C16.5 14.1213 16.5 15.182 15.841 15.841C15.182 16.5 14.1213 16.5 12 16.5H6C3.87868 16.5 2.81802 16.5 2.15901 15.841C1.5 15.182 1.5 14.1213 1.5 12Z"
-                                                    fill="currentColor"
-                                                />
-                                                <path
-                                                    d="M6 12.75C6.41421 12.75 6.75 12.4142 6.75 12C6.75 11.5858 6.41421 11.25 6 11.25C5.58579 11.25 5.25 11.5858 5.25 12C5.25 12.4142 5.58579 12.75 6 12.75Z"
-                                                    fill="currentColor"
-                                                />
-                                                <path
-                                                    d="M9 12.75C9.41421 12.75 9.75 12.4142 9.75 12C9.75 11.5858 9.41421 11.25 9 11.25C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75Z"
-                                                    fill="currentColor"
-                                                />
-                                                <path
-                                                    d="M12.75 12C12.75 12.4142 12.4142 12.75 12 12.75C11.5858 12.75 11.25 12.4142 11.25 12C11.25 11.5858 11.5858 11.25 12 11.25C12.4142 11.25 12.75 11.5858 12.75 12Z"
-                                                    fill="currentColor"
-                                                />
-                                                <path
-                                                    d="M5.0625 6C5.0625 3.82538 6.82538 2.0625 9 2.0625C11.1746 2.0625 12.9375 3.82538 12.9375 6V7.50268C13.363 7.50665 13.7351 7.51651 14.0625 7.54096V6C14.0625 3.20406 11.7959 0.9375 9 0.9375C6.20406 0.9375 3.9375 3.20406 3.9375 6V7.54096C4.26488 7.51651 4.63698 7.50665 5.0625 7.50268V6Z"
-                                                    fill="currentColor"
-                                                />
+                                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.2084 13.5521C16.3025 13.5521 18 11.8615 18 9.77606C18 7.6906 16.3025 6 14.2084 6C12.1144 6 10.4169 7.6906 10.4169 9.77606C10.4169 10.742 10.8578 11.4446 10.8578 11.4446L6.27264 16.011C6.0669 16.2159 5.77886 16.7486 6.27264 17.2404L6.8017 17.7673C7.00743 17.9429 7.52471 18.1888 7.94796 17.7673L8.56519 17.1526C9.18242 17.7673 9.88782 17.416 10.1523 17.0647C10.5932 16.45 10.0642 15.8353 10.0642 15.8353L10.2405 15.6597C11.087 16.5027 11.8277 16.011 12.0922 15.6597C12.5331 15.045 12.0922 14.4303 12.0922 14.4303C11.9159 14.079 11.5632 14.079 12.004 13.64L12.5331 13.113C12.9564 13.4643 13.8264 13.5521 14.2084 13.5521Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                                                <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" />
                                             </svg>
                                         </span>
                                     </div>
                                 </div>) : ("")}
-                                <div>
-                                    <label className="flex cursor-pointer items-center">
-                                        <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
-                                        <span className="text-white-dark">Subscribe to weekly newsletter</span>
-                                    </label>
-                                </div>
                                 {otpSent ? (
-                                    <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                        Sign in
+                                    <button
+                                        type="submit"
+                                        className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                                        disabled={loginInitiated}
+                                        tabIndex={5}
+                                    >
+                                        {loginInitiated ? (
+                                            <span className="animate-spin border-2 border-white border-l-transparent rounded-full w-5 h-5 ltr:mr-4 rtl:ml-4 inline-block align-middle"></span>
+                                        ) : (
+                                            "Sign In"
+                                        )}&nbsp;
+                                        {loginInitiated && "Logging In"}
                                     </button>
                                 ) : (
-                                    <button type="button" onClick={sendOtp} className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                        ((otpSendig) ? (
-                                            <span className="animate-spin border-2 border-white border-l-transparent rounded-full w-5 h-5 ltr:mr-4 rtl:ml-4 inline-block align-middle"></span> Sending Otp ...
-                                        ) : ("Send Otp"))
+                                    <button
+                                        type="button"
+                                        onClick={sendOtp}
+                                        className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                                        disabled={otpSending}
+                                        tabIndex={4}
+                                    >
+                                        {otpSending ? (
+                                            <span className="animate-spin border-2 border-white border-l-transparent rounded-full w-5 h-5 ltr:mr-4 rtl:ml-4 inline-block align-middle"></span>
+                                        ) : (
+                                            "Send Otp"
+                                        )}&nbsp;
+                                        {otpSending && "Sending Otp"}
                                     </button>
                                 )}
                             </form>

@@ -22,4 +22,9 @@ class Route extends Model
     ];
 
     public $timestamps = false;
+
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class, 'menuRouteId', 'routeId');
+    }
 }

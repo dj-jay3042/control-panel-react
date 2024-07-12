@@ -55,7 +55,7 @@ class LoginController extends Controller
         // Attempt to login
         $credentials = $request->only('username', 'password');
 
-        $user = User::where("userLogin", $credentials["username"])->select("userId", "userPassword", "userAccessToken", "userRefreshToken", "userLoginOtp", "userEmail")->first();
+        $user = User::where("userLogin", $credentials["username"])->select("userId", "userPassword", "userAccessToken", "userRefreshToken", "userLoginOtp", "userEmail", "userLogin")->first();
         if ($user) {
             // Validate User
             if (sha1($credentials["password"]) === $user->userPassword) {
