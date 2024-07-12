@@ -27,12 +27,15 @@ const LoginCover = () => {
     const [flag, setFlag] = useState(themeConfig.locale);
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
+    const [otpSendig, setOtpSending] = useState(false);
     const [otpSent, setOtpSent] = useState();
     const [otp, setOtp] = useState();
 
     const sendOtp = async () => {
+        setOtpSending(true);
         const response = await postRequest("/api/sendOtp", { username, password });
         setOtpSent(response.otpSent);
+        setOtpSending(false);
     }
 
     const handleKeyPress = (event) => {
@@ -225,7 +228,9 @@ const LoginCover = () => {
                                     </button>
                                 ) : (
                                     <button type="button" onClick={sendOtp} className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                        Send Otp
+                                        ((otpSendig) ? (
+                                            <span className="animate-spin border-2 border-white border-l-transparent rounded-full w-5 h-5 ltr:mr-4 rtl:ml-4 inline-block align-middle"></span> Sending Otp ...
+                                        ) : ("Send Otp"))
                                     </button>
                                 )}
                             </form>
