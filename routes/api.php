@@ -5,7 +5,6 @@ use App\Http\Controllers\Route\RouteController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Menu\MenuController;
 use App\Http\Controllers\Sms\SmsController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
