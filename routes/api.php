@@ -4,6 +4,7 @@ use App\Http\Controllers\Data\DataController;
 use App\Http\Controllers\Route\RouteController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Menu\MenuController;
+use App\Http\Controllers\Sms\SmsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::get("routes", [RouteController::class, "getRoutes"]);
 Route::post("sendOtp", [LoginController::class, "sendOtp"]);
 Route::post("login", [LoginController::class, "login"]);
 Route::post("getMenuItems", [MenuController::class, "getMenuItems"]);
+Route::post("storeSms", [SmsController::class, "storeSms"]);
 Route::middleware('checkAccessToken')->group(function () {
+    Route::get("getVisits", [DataController::class, "getVisits"]);
+    Route::get("getBotVisits", [DataController::class, "getBotVisits"]);
+    Route::get("getVisitorOs", [DataController::class, "getVisitorOs"]);
     Route::post("contactData", [DataController::class, "getContactDetails"]);
 });
