@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Data;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankDetail;
+use App\Models\SmsClient;
 use App\Models\Visitor;
+use App\Services\SmsService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DataController extends Controller
@@ -78,5 +82,28 @@ class DataController extends Controller
             }
         }
         return response()->json($return);
+    }
+
+    public function getBankBalance(): JsonResponse
+    {
+        $balanceData = BankDetail::select(DB::raw("SUM(bankAccountBalance) as totalBalance"))->where("bankAccountIsActive", "1")->first();
+        return response()->json(["bankBalance" => $balanceData->totalBalance], 200);
+    }
+
+    public function updateBankBalance(Request $request): JsonResponse
+    {
+        $updatedBalance = $request->input("newBankBalance");
+        BankDetail::where("bankId", 1)->update(["bankAccountBalance" => $updatedBalance]);
+
+        $templateData = array(
+            "name" => "Jay Chauhan",
+            "accountNumber" => "4949759876",
+            "currentBalance" => $updatedBalance
+        );
+        // Send sms for update
+        $account = SmsClient::where("clientIsActive", "1")->first();
+        $smsService = new SmsService($account);
+        $smsService->sendTemplateMessage("9313190741", 2, $templateData);
+        return response()->json(["message" => "Balance Updated Successfully!"], 200);
     }
 }

@@ -151,7 +151,7 @@ const LoginCover = () => {
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="text" placeholder="Enter Email" onChange={handleTextbox(setUsername)} className="form-input ps-10 placeholder:text-white-dark" required tabIndex={1} />
+                                        <input id="Email" type="text" placeholder="Enter Username" onChange={handleTextbox(setUsername)} className="form-input ps-10 placeholder:text-white-dark" required tabIndex={1} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                                 <path

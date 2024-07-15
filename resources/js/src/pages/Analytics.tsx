@@ -5,7 +5,8 @@ import { IRootState } from '../store';
 import Dropdown from '../components/Dropdown';
 import { useEffect, useState } from 'react';
 import { setPageTitle } from '../store/themeConfigSlice';
-import { getRequest } from '../utils/Request';
+import { getRequest, postRequest } from '../utils/Request';
+import { handleTextbox } from '../utils/Functions';
 
 const Analytics = () => {
     const dispatch = useDispatch();
@@ -14,6 +15,50 @@ const Analytics = () => {
     const [botVisit, setBotVisit] = useState([]);
     const [botVisitCount, setBotVisitCount] = useState(0);
     const [totalVisitCount, setTotalVisitCount] = useState(0);
+    const [bankBalance, setBankBalance] = useState(0);
+    const [newBankBalance, setNewBankBalance] = useState(0);
+    const [updateBankBalance, setUpdateBankBalance] = useState(false);
+    const [addBankBalance, setAddBankBalance] = useState(false);
+    const [addValue, setAddValue] = useState(0);
+
+    const formatToIndianCurrency = (number) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 2
+        }).format(number);
+    }
+    const upgradeBankBalance = async () => {
+        if (updateBankBalance) {
+            if (bankBalance != newBankBalance) {
+                const headers = {
+                    "Content-Type": "application/json",
+                    "accessToken": localStorage.getItem('accessToken')
+                };
+                await postRequest("/api/updateBankBalance", { newBankBalance: newBankBalance }, {}, headers);
+                setBankBalance(newBankBalance);
+            }
+        }
+        setNewBankBalance(bankBalance);
+        setUpdateBankBalance(!updateBankBalance);
+    }
+    const AddBankBalance = async () => {
+        if (addBankBalance) {
+            if (addValue != 0) {
+                const headers = {
+                    "Content-Type": "application/json",
+                    "accessToken": localStorage.getItem('accessToken')
+                };
+                const newBalance = parseFloat(bankBalance) + parseFloat(addValue);
+                await postRequest("/api/updateBankBalance", {
+                    newBankBalance: newBalance
+                }, {}, headers);
+                setBankBalance(newBalance);
+                setAddValue(0);
+            }
+        }
+        setAddBankBalance(!addBankBalance);
+    }
     useEffect(() => {
         const headers = {
             "Content-Type": "application/json",
@@ -33,9 +78,14 @@ const Analytics = () => {
             setBotVisit(response.map(item => item.visit_count));
             setBotVisitCount(botVisit.reduce((acc, count) => acc + count, 0));
         }
+        const getBankBalance = async () => {
+            const response = await getRequest("/api/getBankBalance", {}, headers);
+            setBankBalance(response.bankBalance);
+        }
         getVisits();
         getBotVisits();
         getOsDetails();
+        getBankBalance();
         dispatch(setPageTitle('Dashboard'));
     }, [dispatch]);
 
@@ -399,18 +449,24 @@ const Analytics = () => {
                             <h5 className="font-semibold text-lg">Total Balance</h5>
 
                             <div className="relative text-xl whitespace-nowrap">
-                                $ 41,741.42
-                                <span className="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">+ 2453</span>
+                                {((updateBankBalance) ? (
+                                    <input type="text" name="bankBalance" onChange={handleTextbox(setNewBankBalance)} value={newBankBalance} className='form-input' />
+                                ) : (formatToIndianCurrency(bankBalance)))}
                             </div>
                         </div>
                         <div className="flex items-center justify-between z-10">
                             <div className="flex items-center justify-between">
-                                <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2">
+                                <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2" onClick={AddBankBalance}>
                                     <svg className="w-5 h-5" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
                                 </button>
+                                {((addBankBalance) ? (
+                                    <>
+                                        <input type="text" className="form-input" placeholder="Enter Amount..." onChange={handleTextbox(setAddValue)} />&nbsp;&nbsp;
+                                    </>
+                                ) : (""))}
                                 <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -424,7 +480,7 @@ const Analytics = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#4361ee] z-10">
+                            <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#4361ee] z-10" onClick={upgradeBankBalance}>
                                 Upgrade
                             </button>
                         </div>

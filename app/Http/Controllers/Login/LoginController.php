@@ -85,4 +85,8 @@ class LoginController extends Controller
         }
         return response()->json(["message" => "Incorrect Username!"], 401);
     }
+
+    public function resetPassword(Request $request)
+    {
+    }
 }
