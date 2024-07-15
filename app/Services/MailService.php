@@ -9,16 +9,18 @@ use Illuminate\Support\Facades\Log;
 use Exception;
 
 
-class MailService {
-    public function sendMail($emailAddress, $emailTemplateId, $bodyParams = []) {
+class MailService
+{
+    public function sendMail($emailAddress, $emailTemplateId, $bodyParams = [])
+    {
         try {
             $templateDetails = EmailTemplate::where("templateId", $emailTemplateId)
-                                            ->where("templateIsActive", "1")
-                                            ->select("templateBody", "templateSubject")
-                                            ->first();
+                ->where("templateIsActive", "1")
+                ->select("templateBody", "templateSubject")
+                ->first();
 
             if (!$templateDetails) {
-                Log::error("Email template not found or inactive: ID $emailTemplateId");
+                Log::channel('template')->error("Email template not found or inactive: ID $emailTemplateId");
                 return false;
             }
 
@@ -35,8 +37,9 @@ class MailService {
         }
     }
 
-    private function renderTemplate($templateBody, $bodyParams) {
-        return preg_replace_callback('/\{\{\s*mailBodyData\.([a-zA-Z0-9_]+)\s*\}\}/', function($matches) use ($bodyParams) {
+    private function renderTemplate($templateBody, $bodyParams)
+    {
+        return preg_replace_callback('/\{\{\s*mailBodyData\.([a-zA-Z0-9_]+)\s*\}\}/', function ($matches) use ($bodyParams) {
             $key = $matches[1];
             return isset($bodyParams[$key]) ? $bodyParams[$key] : $matches[0];
         }, $templateBody);

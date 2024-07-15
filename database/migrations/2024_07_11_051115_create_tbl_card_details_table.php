@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblCardDetails', function (Blueprint $table) {
-            $table->id('cardId');
-            $table->char('cardNumber', 16);
-            $table->string('cardExpiryDate', 5);
-            $table->char('cardCvv', 3);
-            $table->char('cardPassword', 6);
-            $table->string('cardHolderName', 64);
-            $table->unsignedBigInteger('cardContactId');
-            $table->char('carIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblCardDetails')) {
+            Schema::create('tblCardDetails', function (Blueprint $table) {
+                $table->id('cardId');
+                $table->char('cardNumber', 16);
+                $table->string('cardExpiryDate', 5);
+                $table->char('cardCvv', 3);
+                $table->char('cardPassword', 6);
+                $table->string('cardHolderName', 64);
+                $table->unsignedBigInteger('cardContactId');
+                $table->char('cardIsActive', 1)->default('1');
+            });
+        }
     }
 
     /**

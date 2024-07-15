@@ -14,14 +14,16 @@ class CreateTblVisitorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tblVisitors', function (Blueprint $table) {
-            $table->integer('id')->primary();
-            $table->string('ip', 28);
-            $table->string('browser', 128);
-            $table->string('os', 128);
-            $table->string('device', 128);
-            $table->dateTime('visitedDate')->default(DB::raw('CURRENT_TIMESTAMP'));
-        });
+        if (!Schema::hasTable('tblVisitors')) {
+            Schema::create('tblVisitors', function (Blueprint $table) {
+                $table->integer('id')->primary();
+                $table->string('ip', 28);
+                $table->string('browser', 128);
+                $table->string('os', 128);
+                $table->string('device', 128);
+                $table->dateTime('visitedDate')->default(DB::raw('CURRENT_TIMESTAMP'));
+            });
+        }
     }
 
     /**

@@ -4,15 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateTblSmsTemplatesTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up()
     {
-        if (!Schema::hasTable('tblEmailTemplates')) {
-            Schema::create('tblEmailTemplates', function (Blueprint $table) {
+        if (!Schema::hasTable('tblSmsTemplates')) {
+            Schema::create('tblSmsTemplates', function (Blueprint $table) {
                 $table->id('templateId');
                 $table->string('templateName', 64);
                 $table->string('templateSubject', 128);
@@ -22,12 +24,13 @@ return new class extends Migration
         }
     }
 
-
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('tblEmailTemplates');
+        Schema::dropIfExists('tblSmsTemplates');
     }
-};
+}

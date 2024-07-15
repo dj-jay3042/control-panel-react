@@ -172,3 +172,28 @@ CREATE TABLE tblMenuItems (
     FOREIGN KEY (menuRouteId) REFERENCES tblRoutes (routeId),
     FOREIGN KEY (menuParentId) REFERENCES tblMenuItems (menuId)
 );
+CREATE TABLE tblSms (
+    smsId int primary key AUTO_INCREMENT,
+    smsMessageId varchar(128),
+    smsFrom varchar(128) NOT NULL,
+    smsTo varchar(128) NOT NULL,
+    smsBody text NOT NULL,
+    smsType char(1) NOT NULL default '0',
+    smsStatus char(1) NOT NULL default '0',
+    smsTime datetime NOT NULL default CURRENT_TIMESTAMP
+);
+CREATE TABLE tblSmsClient (
+    clientId int primary key AUTO_INCREMENT,
+    clientName varchar(64) NOT NULL,
+    clientApiKey varchar(128) NOT NULL,
+    clientSenderMobileNumber varchar(10) NOT NULL,
+    clientApiBaseUrl varchar(255) NOT NULL,
+    clientIsActive char(1) NOT NULL default '1'
+);
+CREATE TABLE tblSmsTemplates (
+    templateId int primary key AUTO_INCREMENT,
+    templateName varchar(64) NOT NULL,
+    templateSubject varchar(128) NOT NULL,
+    templateBody text NOT NULL,
+    templateIsActive char(1) NOT NULL default '1'
+);

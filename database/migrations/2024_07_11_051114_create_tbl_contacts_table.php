@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblContacts', function (Blueprint $table) {
-            $table->id('contactId');
-            $table->string('contactFirstName', 64);
-            $table->string('contactLastName', 64);
-            $table->char('contactPhoneNumber', 10);
-            $table->char('contactWhatsappNumber', 10)->nullable();
-            $table->string('contactEmail', 255)->nullable();
-            $table->json('contactAddress');
-            $table->string('contactAdditionaDetails', 255)->nullable();
-            $table->char('contactIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblContacts')) {
+            Schema::create('tblContacts', function (Blueprint $table) {
+                $table->id('contactId');
+                $table->string('contactFirstName', 64);
+                $table->string('contactLastName', 64);
+                $table->char('contactPhoneNumber', 10);
+                $table->char('contactWhatsappNumber', 10)->nullable();
+                $table->string('contactEmail', 255)->nullable();
+                $table->json('contactAddress');
+                $table->string('contactAdditionaDetails', 255)->nullable();
+                $table->char('contactIsActive', 1)->default('1');
+            });
+        }
     }
 
 

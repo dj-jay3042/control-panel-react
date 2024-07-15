@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblEmailsDetails', function (Blueprint $table) {
-            $table->id('emailId');
-            $table->string('emailAddress', 255);
-            $table->char('emailIsActive', 1)->default('1');
-            $table->unsignedBigInteger('contactId')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblEmailsDetails')) {
+            Schema::create('tblEmailsDetails', function (Blueprint $table) {
+                $table->id('emailId');
+                $table->string('emailAddress', 255);
+                $table->char('emailIsActive', 1)->default('1');
+                $table->unsignedBigInteger('contactId')->nullable();
+            });
+        }
     }
 
     /**

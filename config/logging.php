@@ -124,6 +124,12 @@ return [
             'path' => storage_path('logs/sms.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
+
+        'template' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/templates.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
     ],
 
 ];

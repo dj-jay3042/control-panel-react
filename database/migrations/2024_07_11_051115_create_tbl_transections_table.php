@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblTransections', function (Blueprint $table) {
-            $table->id('transactionId');
-            $table->unsignedBigInteger('transactionUserId');
-            $table->unsignedBigInteger('transectionPaymentMeyhodId');
-            $table->string('transectionTitle', 128);
-            $table->decimal('transectionAmount', 13, 2);
-            $table->char('transectionType', 1)->default('0');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblTransections')) {
+            Schema::create('tblTransections', function (Blueprint $table) {
+                $table->id('transactionId');
+                $table->unsignedBigInteger('transactionUserId');
+                $table->unsignedBigInteger('transectionPaymentMeyhodId');
+                $table->string('transectionTitle', 128);
+                $table->decimal('transectionAmount', 13, 2);
+                $table->char('transectionType', 1)->default('0');
+            });
+        }
     }
 
 

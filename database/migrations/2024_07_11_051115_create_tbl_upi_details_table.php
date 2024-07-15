@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblUpiDetails', function (Blueprint $table) {
-            $table->id('upiId');
-            $table->string('upiName', 64);
-            $table->string('upiAppName', 128);
-            $table->string('upiUpiId', 20);
-            $table->char('upiPassword', 6);
-            $table->unsignedBigInteger('upiContactId');
-            $table->char('upiIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblUpiDetails')) {
+            Schema::create('tblUpiDetails', function (Blueprint $table) {
+                $table->id('upiId');
+                $table->string('upiName', 64);
+                $table->string('upiAppName', 128);
+                $table->string('upiUpiId', 20);
+                $table->char('upiPassword', 6);
+                $table->unsignedBigInteger('upiContactId');
+                $table->char('upiIsActive', 1)->default('1');
+            });
+        }
     }
 
 

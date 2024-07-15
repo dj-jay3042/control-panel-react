@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblMails', function (Blueprint $table) {
-            $table->id('mailId');
-            $table->string('mailFrom', 255);
-            $table->string('mailTo', 255);
-            $table->string('mailCc', 255)->nullable();
-            $table->string('mailBcc', 255)->nullable();
-            $table->text('mailBody');
-            $table->char('mailType', 1)->default('0');
-            $table->integer('mailHasAttachments')->nullable();
-            $table->unsignedBigInteger('mailParentId')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblMails')) {
+            Schema::create('tblMails', function (Blueprint $table) {
+                $table->id('mailId');
+                $table->string('mailFrom', 255);
+                $table->string('mailTo', 255);
+                $table->string('mailCc', 255)->nullable();
+                $table->string('mailBcc', 255)->nullable();
+                $table->text('mailBody');
+                $table->char('mailType', 1)->default('0');
+                $table->integer('mailHasAttachments')->nullable();
+                $table->unsignedBigInteger('mailParentId')->nullable();
+            });
+        }
     }
 
 

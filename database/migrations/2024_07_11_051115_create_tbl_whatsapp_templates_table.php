@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblWhatsappTemplates', function (Blueprint $table) {
-            $table->id('templateId');
-            $table->string('templateName', 64);
-            $table->unsignedBigInteger('templateWhatsappClientId');
-            $table->string('templateWhatsappClientIdentifier', 128);
-            $table->text('templateMessage');
-            $table->integer('templateVariableCount')->default(0);
-            $table->char('templateIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblWhatsappTemplates')) {
+            Schema::create('tblWhatsappTemplates', function (Blueprint $table) {
+                $table->id('templateId');
+                $table->string('templateName', 64);
+                $table->unsignedBigInteger('templateWhatsappClientId');
+                $table->string('templateWhatsappClientIdentifier', 128);
+                $table->text('templateMessage');
+                $table->integer('templateVariableCount')->default(0);
+                $table->char('templateIsActive', 1)->default('1');
+            });
+        }
     }
 
 

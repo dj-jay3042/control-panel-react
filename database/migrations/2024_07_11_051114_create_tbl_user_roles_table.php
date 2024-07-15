@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblUserRoles', function (Blueprint $table) {
-            $table->id('roleId');
-            $table->string('roleName', 32);
-            $table->string('roleDescription', 128);
-            $table->json('roleAccessDetails');
-            $table->char('roleIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblUserRoles')) {
+            Schema::create('tblUserRoles', function (Blueprint $table) {
+                $table->id('roleId');
+                $table->string('roleName', 32);
+                $table->string('roleDescription', 128);
+                $table->json('roleAccessDetails');
+                $table->char('roleIsActive', 1)->default('1');
+            });
+        }
     }
 
 

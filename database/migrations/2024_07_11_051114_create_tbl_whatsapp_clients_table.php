@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblWhatsappClients', function (Blueprint $table) {
-            $table->id('clientId');
-            $table->string('clientName', 64);
-            $table->char('clientWhatsppNumber', 10);
-            $table->string('clientAccountId', 64)->nullable();
-            $table->string('clientBaseUrl', 128);
-            $table->string('clientApiKey', 300)->nullable();
-            $table->char('clientTestMode', 1)->default('0');
-            $table->char('clientIsActive', 1)->default('1');
-            $table->char('clientIsDeleted', 1)->default('0');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblWhatsappClients')) {
+            Schema::create('tblWhatsappClients', function (Blueprint $table) {
+                $table->id('clientId');
+                $table->string('clientName', 64);
+                $table->char('clientWhatsppNumber', 10);
+                $table->string('clientAccountId', 64)->nullable();
+                $table->string('clientBaseUrl', 128);
+                $table->string('clientApiKey', 300)->nullable();
+                $table->char('clientTestMode', 1)->default('0');
+                $table->char('clientIsActive', 1)->default('1');
+                $table->char('clientIsDeleted', 1)->default('0');
+            });
+        }
     }
 
 

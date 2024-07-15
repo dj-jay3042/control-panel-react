@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblRoutes', function (Blueprint $table) {
-            $table->id('routeId');
-            $table->string('routeName', 64);
-            $table->string('routeComponentName', 64);
-            $table->string('routeComponentLocation', 128);
-            $table->string('routeUrl', 32);
-            $table->char('routeTarget', 1)->default('0');
-            $table->char('routeIsPrivate', 1)->default('0');
-            $table->char('routeIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblRoutes')) {
+            Schema::create('tblRoutes', function (Blueprint $table) {
+                $table->id('routeId');
+                $table->string('routeName', 64);
+                $table->string('routeComponentName', 64);
+                $table->string('routeComponentLocation', 128);
+                $table->string('routeUrl', 32);
+                $table->char('routeTarget', 1)->default('0');
+                $table->char('routeIsPrivate', 1)->default('0');
+                $table->char('routeIsActive', 1)->default('1');
+            });
+        }
     }
 
 

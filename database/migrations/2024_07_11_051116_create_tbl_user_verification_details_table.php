@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblUserVerificationDetails', function (Blueprint $table) {
-            $table->id('verificationId');
-            $table->unsignedBigInteger('verificationUserId');
-            $table->char('verificationType', 1);
-            $table->string('verificationKeyType', 1);
-            $table->string('verificationValue', 128);
-            $table->char('verificationStatus', 1)->default('0');
-            $table->timestamps();
-            $table->foreign('verificationUserId')->references('userId')->on('tblUsers');
-        });
+        if (!Schema::hasTable('tblUserVerificationDetails')) {
+            Schema::create('tblUserVerificationDetails', function (Blueprint $table) {
+                $table->id('verificationId');
+                $table->unsignedBigInteger('verificationUserId');
+                $table->char('verificationType', 1);
+                $table->string('verificationKeyType', 1);
+                $table->string('verificationValue', 128);
+                $table->char('verificationStatus', 1)->default('0');
+                $table->foreign('verificationUserId')->references('userId')->on('tblUsers');
+            });
+        }
     }
 
 

@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tblBankDetails', function (Blueprint $table) {
-            $table->id('bankId');
-            $table->string('bankName', 128);
-            $table->char('bankAccountNumber', 18);
-            $table->json('bankAddress');
-            $table->char('bankIfscCode', 11);
-            $table->decimal('bankAccountMinimumAmount', 10, 2);
-            $table->decimal('bankAccountBalance', 13, 2)->nullable();
-            $table->unsignedBigInteger('bankContactId');
-            $table->char('bankAccountIsActive', 1)->default('1');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('tblBankDetails')) {
+            Schema::create('tblBankDetails', function (Blueprint $table) {
+                $table->id('bankId');
+                $table->string('bankName', 128);
+                $table->char('bankAccountNumber', 18);
+                $table->json('bankAddress');
+                $table->char('bankIfscCode', 11);
+                $table->decimal('bankAccountMinimumAmount', 10, 2);
+                $table->decimal('bankAccountBalance', 13, 2)->nullable();
+                $table->unsignedBigInteger('bankContactId');
+                $table->char('bankAccountIsActive', 1)->default('1');
+                $table->timestamps();
+            });
+        }
     }
 
 

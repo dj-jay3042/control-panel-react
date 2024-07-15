@@ -23,6 +23,7 @@ Route::post("sendOtp", [LoginController::class, "sendOtp"]);
 Route::post("login", [LoginController::class, "login"]);
 Route::post("getMenuItems", [MenuController::class, "getMenuItems"]);
 Route::post("storeSms", [SmsController::class, "storeSms"]);
+Route::post("sendSms", [SmsController::class, "sendRawSms"]);
 Route::middleware('checkAccessToken')->group(function () {
     Route::get("getVisits", [DataController::class, "getVisits"]);
     Route::get("getBotVisits", [DataController::class, "getBotVisits"]);
