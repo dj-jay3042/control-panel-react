@@ -18,9 +18,12 @@ const errorToster = (message) => {
     });
 };
 
+// Set Base Url
+const baseURL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+
 // Create an Axios instance
 const axiosInstance = axios.create({
-    baseURL: "https://admin.dj-jay.in", // Change this to your API's base URL
+    baseURL: baseURL, // Change this to your API's base URL
     headers: {
         'Content-Type': 'application/json',
     },
