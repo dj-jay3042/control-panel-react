@@ -133,18 +133,16 @@ class SmsService
             "smsTime" => date("Y-m-d H:i:s", strtotime($data["data"]["timestamp"]))
         );
         if (Sms::insert($insertData)) {
-            if ($data["data"]["contact"] == "JX-KOTAKB") {
-                $pattern = '/Sent Rs\.(\d+\.\d{2}) from (\w+) Bank AC X9876 to/';
-                if (preg_match($pattern, $data["data"]["content"], $matches)) {
-                    $transectionData = array(
-                        "transactionUserId" => 1,
-                        "transectionPaymentMeyhodId" => 1,
-                        "transectionTitle" => "Kotak Bank Account Transection! ::Please enter title",
-                        "transectionAmount" => $matches[1],
-                        "transectionType" => "0"
-                    );
-                    Transection::insert($transectionData);
-                }
+            $pattern = '/Sent Rs\.(\d+\.\d{2}) from (\w+) Bank AC X9876 to/';
+            if (preg_match($pattern, $data["data"]["content"], $matches)) {
+                $transectionData = array(
+                    "transactionUserId" => 1,
+                    "transectionPaymentMeyhodId" => 1,
+                    "transectionTitle" => "Kotak Bank Account Transection! ::Please enter title",
+                    "transectionAmount" => $matches[1],
+                    "transectionType" => "0"
+                );
+                Transection::insert($transectionData);
             }
         } else {
             Log::channel('sms')->error('SMS not inserted', ([$data, $insertData]));
