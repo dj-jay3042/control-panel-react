@@ -29,6 +29,7 @@ Route::middleware('checkAccessToken')->group(function () {
     Route::get("getBotVisits", [DataController::class, "getBotVisits"]);
     Route::get("getVisitorOs", [DataController::class, "getVisitorOs"]);
     Route::get("getBankBalance", [DataController::class, "getBankBalance"]);
+    Route::get("getSms", [SmsController::class, "getSms"]);
     Route::post("updateBankBalance", [DataController::class, "updateBankBalance"]);
     Route::post("contactData", [DataController::class, "getContactDetails"]);
 });

@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Sms;
 use App\Http\Controllers\Controller;
 use App\Models\Sms;
 use App\Models\SmsClient;
-use App\Models\Transection;
 use App\Services\SmsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class SmsController extends Controller
 {
@@ -31,5 +30,35 @@ class SmsController extends Controller
         $content = $request->input("content");
         $response = $this->smsService->sendRawMessage($to, $content);
         return $response;
+    }
+
+    public function getSms(): JsonResponse
+    {
+        $smsData = Sms::all();
+        // echo "<pre>";
+        $userMessages = [];
+        foreach ($smsData as $sms) {
+            $userId = ($sms->smsType == 0) ? $sms->smsFrom : $sms->smsTo;
+
+            if (!isset($userMessages[$userId])) {
+                $userMessages[$userId] = [
+                    'userId' => $userId,
+                    'name' => ($sms->smsType == 0) ? $sms->smsFrom : $sms->smsTo,
+                    'path' => "/assets/images/auth/user.png",
+                    'time' => date('g:i A', strtotime($sms->smsTime)),
+                    'preview' => $sms->smsBody,
+                    'messages' => [],
+                    'active' => true,
+                ];
+            }
+
+            $userMessages[$userId]['messages'][date("d M, Y", strtotime($sms->smsTime))][] = [
+                'fromUserId' => $sms->smsTo,
+                'toUserId' => $sms->smsFrom,
+                'text' => $sms->smsBody,
+            ];
+        }
+
+        return response()->json(array_values($userMessages), 200);
     }
 }

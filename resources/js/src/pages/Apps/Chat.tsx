@@ -4,236 +4,76 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { setPageTitle } from '../../store/themeConfigSlice';
+import { getRequest, postRequest } from '../../utils/Request';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import Messages from './Messages';
 
-const contactList = [
-    {
-        userId: 1,
-        name: 'Nia Hillyer',
-        path: 'profile-16.jpeg',
-        time: '2:09 PM',
-        preview: 'How do you do?',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 1,
-                text: 'Hi, I am back from vacation',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 1,
-                text: 'How are you?',
-            },
-            {
-                fromUserId: 1,
-                toUserId: 0,
-                text: 'Welcom Back',
-            },
-            {
-                fromUserId: 1,
-                toUserId: 0,
-                text: 'I am all well',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 1,
-                text: 'Coffee?',
-            },
-        ],
-        active: true,
-    },
-    {
-        userId: 2,
-        name: 'Sean Freeman',
-        path: 'profile-1.jpeg',
-        time: '12:09 PM',
-        preview: 'I was wondering...',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 2,
-                text: 'Hello',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 2,
-                text: "It's me",
-            },
-            {
-                fromUserId: 0,
-                toUserId: 2,
-                text: 'I have a question regarding project.',
-            },
-        ],
-        active: false,
-    },
-    {
-        userId: 3,
-        name: 'Alma Clarke',
-        path: 'profile-2.jpeg',
-        time: '1:44 PM',
-        preview: 'I’ve forgotten how it felt before',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 3,
-                text: 'Hey Buddy.',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 3,
-                text: "What's up",
-            },
-            {
-                fromUserId: 3,
-                toUserId: 0,
-                text: 'I am sick',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 3,
-                text: 'Not comming to office today.',
-            },
-        ],
-        active: true,
-    },
-    {
-        userId: 4,
-        name: 'Alan Green',
-        path: 'profile-3.jpeg',
-        time: '2:06 PM',
-        preview: 'But we’re probably gonna need a new carpet.',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 4,
-                text: 'Hi, collect your check',
-            },
-            {
-                fromUserId: 4,
-                toUserId: 0,
-                text: 'Ok, I will be there in 10 mins',
-            },
-        ],
-        active: true,
-    },
-    {
-        userId: 5,
-        name: 'Shaun Park',
-        path: 'profile-4.jpeg',
-        time: '2:05 PM',
-        preview: 'It’s not that bad...',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 3,
-                text: 'Hi, I am back from vacation',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 3,
-                text: 'How are you?',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 5,
-                text: 'Welcom Back',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 5,
-                text: 'I am all well',
-            },
-            {
-                fromUserId: 5,
-                toUserId: 0,
-                text: 'Coffee?',
-            },
-        ],
-        active: false,
-    },
-    {
-        userId: 6,
-        name: 'Roxanne',
-        path: 'profile-5.jpeg',
-        time: '2:00 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [
-            {
-                fromUserId: 0,
-                toUserId: 6,
-                text: 'Hi',
-            },
-            {
-                fromUserId: 0,
-                toUserId: 6,
-                text: 'Uploaded files to server.',
-            },
-        ],
-        active: false,
-    },
-    {
-        userId: 7,
-        name: 'Ernest Reeves',
-        path: 'profile-6.jpeg',
-        time: '2:09 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: true,
-    },
-    {
-        userId: 8,
-        name: 'Laurie Fox',
-        path: 'profile-7.jpeg',
-        time: '12:09 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: true,
-    },
-    {
-        userId: 9,
-        name: 'Xavier',
-        path: 'profile-8.jpeg',
-        time: '4:09 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: false,
-    },
-    {
-        userId: 10,
-        name: 'Susan Phillips',
-        path: 'profile-9.jpeg',
-        time: '9:00 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: true,
-    },
-    {
-        userId: 11,
-        name: 'Dale Butler',
-        path: 'profile-10.jpeg',
-        time: '5:09 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: false,
-    },
-    {
-        userId: 12,
-        name: 'Grace Roberts',
-        path: 'user-profile.jpeg',
-        time: '8:01 PM',
-        preview: 'Wasup for the third time like is you bling bitch',
-        messages: [],
-        active: true,
-    },
-];
+const MySwal = withReactContent(Swal);
+const errorToster = (message) => {
+    MySwal.fire({
+        title: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        showCloseButton: false,
+        customClass: {
+            popup: `color-danger`,
+        },
+    });
+};
 const loginUser = {
-    id: 0,
-    name: 'Alon Smith',
-    path: 'profile-34.jpeg',
+    id: "9313190741",
+    name: 'Jay Chauhan',
+    path: '/favicon.png',
     designation: 'Software Developer',
 };
+
+
 const Chat = () => {
+    const [contactList, setContactList] = useState([
+        {
+            userId: 1,
+            name: 'Nia Hillyer',
+            path: 'profile-16.jpeg',
+            time: '2:09 PM',
+            preview: 'How do you do?',
+            messages: [
+                {
+                    fromUserId: 0,
+                    toUserId: 1,
+                    text: 'Hi, I am back from vacation',
+                },
+                {
+                    fromUserId: 0,
+                    toUserId: 1,
+                    text: 'How are you?',
+                },
+                {
+                    fromUserId: 1,
+                    toUserId: 0,
+                    text: 'Welcom Back',
+                },
+                {
+                    fromUserId: 1,
+                    toUserId: 0,
+                    text: 'I am all well',
+                },
+                {
+                    fromUserId: 0,
+                    toUserId: 1,
+                    text: 'Coffee?',
+                },
+            ],
+            active: true,
+        },
+    ]);
     const dispatch = useDispatch();
+    const headers = {
+        "Content-Type": "application/json",
+        "accessToken": localStorage.getItem('accessToken')
+    };
     useEffect(() => {
         dispatch(setPageTitle('Chat'));
     });
@@ -248,11 +88,19 @@ const Chat = () => {
     const [filteredItems, setFilteredItems] = useState<any>(contactList);
 
     useEffect(() => {
+        const getSms = async () => {
+            const response = await getRequest("/api/getSms", {}, headers);
+            setContactList(response);
+            setFilteredItems(response);
+        }
+        getSms();
+
         setFilteredItems(() => {
             return contactList.filter((d) => {
                 return d.name.toLowerCase().includes(searchUser.toLowerCase());
             });
         });
+
     }, [searchUser]);
 
     const scrollToBottom = () => {
@@ -270,19 +118,29 @@ const Chat = () => {
         scrollToBottom();
         setIsShowChatMenu(false);
     };
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (textMessage.trim()) {
             let list = contactList;
             let user: any = list.find((d) => d.userId === selectedUser.userId);
-            user.messages.push({
-                fromUserId: selectedUser.userId,
-                toUserId: 0,
-                text: textMessage,
-                time: 'Just now',
-            });
-            setFilteredItems(list);
-            setTextMessage('');
-            scrollToBottom();
+            let messageData = {
+                to: selectedUser.userId,
+                content: textMessage
+            };
+            let response = await postRequest("/api/sendSms", messageData, {}, headers);
+
+            if (response.status == "success") {
+                user.messages.push({
+                    fromUserId: selectedUser.userId,
+                    toUserId: 0,
+                    text: textMessage,
+                    time: 'Just now',
+                });
+                setFilteredItems(list);
+                setTextMessage('');
+                scrollToBottom();
+            } else {
+                errorToster(response.message);
+            }
         }
     };
     const sendMessageHandle = (event: any) => {
@@ -297,10 +155,10 @@ const Chat = () => {
                     <div className="flex justify-between items-center">
                         <div className="flex items-center">
                             <div className="flex-none">
-                                <img src="/assets/images/profile-34.jpeg" className="rounded-full h-12 w-12 object-cover" alt="" />
+                                <img src="/favicon.png" className="rounded-full h-12 w-12 object-cover" alt="" />
                             </div>
                             <div className="mx-3">
-                                <p className="mb-1 font-semibold">Alon Smith</p>
+                                <p className="mb-1 font-semibold">Jay Chauhan</p>
                                 <p className="text-xs text-white-dark">Software Developer</p>
                             </div>
                         </div>
@@ -440,41 +298,42 @@ const Chat = () => {
                     <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
                     <div className="!mt-0">
                         <PerfectScrollbar className="chat-users relative h-full min-h-[100px] sm:h-[calc(100vh_-_357px)] space-y-0.5 ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5">
-                            {filteredItems.map((person: any) => {
-                                return (
-                                    <div key={person.userId}>
-                                        <button
-                                            type="button"
-                                            className={`w-full flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-[#050b14] rounded-md dark:hover:text-primary hover:text-primary ${
-                                                selectedUser && selectedUser.userId === person.userId ? 'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary' : ''
-                                            }`}
-                                            onClick={() => selectUser(person)}
-                                        >
-                                            <div className="flex-1">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 relative">
-                                                        <img src={`/assets/images/${person.path}`} className="rounded-full h-12 w-12 object-cover" alt="" />
-                                                        {person.active && (
-                                                            <div>
-                                                                <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
-                                                                    <div className="w-4 h-4 bg-success rounded-full"></div>
+                            {
+                                filteredItems.map((person: any) => {
+                                    return (
+                                        <div key={person.userId}>
+                                            <button
+                                                type="button"
+                                                className={`w-full flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-[#050b14] rounded-md dark:hover:text-primary hover:text-primary ${selectedUser && selectedUser.userId === person.userId ? 'bg-gray-100 dark:bg-[#050b14] dark:text-primary text-primary' : ''
+                                                    }`}
+                                                onClick={() => selectUser(person)}
+                                            >
+                                                <div className="flex-1">
+                                                    <div className="flex items-center">
+                                                        <div className="flex-shrink-0 relative">
+                                                            <img src={`${person.path}`} className="rounded-full h-12 w-12 object-cover" alt="" />
+                                                            {person.active && (
+                                                                <div>
+                                                                    <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
+                                                                        <div className="w-4 h-4 bg-success rounded-full"></div>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="mx-3 ltr:text-left rtl:text-right">
-                                                        <p className="mb-1 font-semibold">{person.name}</p>
-                                                        <p className="text-xs text-white-dark truncate max-w-[185px]">{person.preview}</p>
+                                                            )}
+                                                        </div>
+                                                        <div className="mx-3 ltr:text-left rtl:text-right">
+                                                            <p className="mb-1 font-semibold">{person.name}</p>
+                                                            <p className="text-xs text-white-dark truncate max-w-[185px]">{person.preview}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="font-semibold whitespace-nowrap text-xs">
-                                                <p>{person.time}</p>
-                                            </div>
-                                        </button>
-                                    </div>
-                                );
-                            })}
+                                                <div className="font-semibold whitespace-nowrap text-xs">
+                                                    <p>{person.time}</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    );
+                                })
+                            }
                         </PerfectScrollbar>
                     </div>
                 </div>
@@ -618,7 +477,7 @@ const Chat = () => {
                                         </svg>
                                     </button>
                                     <div className="relative flex-none">
-                                        <img src={`/assets/images/${selectedUser.path}`} className="rounded-full w-10 h-10 sm:h-12 sm:w-12 object-cover" alt="" />
+                                        <img src={`${selectedUser.path}`} className="rounded-full w-10 h-10 sm:h-12 sm:w-12 object-cover" alt="Profile Inage" />
                                         <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
                                             <div className="w-4 h-4 bg-success rounded-full"></div>
                                         </div>
@@ -775,76 +634,34 @@ const Chat = () => {
                             <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
 
                             <PerfectScrollbar className="relative h-full sm:h-[calc(100vh_-_300px)] chat-conversation-box">
-                                <div className="space-y-5 p-4 sm:pb-0 pb-[68px] sm:min-h-[300px] min-h-[400px]">
-                                    <div className="block m-6 mt-0">
-                                        <h4 className="text-xs text-center border-b border-[#f4f4f4] dark:border-gray-800 relative">
-                                            <span className="relative top-2 px-3 bg-white dark:bg-black">{'Today, ' + selectedUser.time}</span>
-                                        </h4>
-                                    </div>
-                                    {selectedUser.messages && selectedUser.messages.length ? (
-                                        <>
-                                            {selectedUser.messages.map((message: any, index: any) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <div className={`flex items-start gap-3 ${selectedUser.userId === message.fromUserId ? 'justify-end' : ''}`}>
-                                                            <div className={`flex-none ${selectedUser.userId === message.fromUserId ? 'order-2' : ''}`}>
-                                                                {selectedUser.userId === message.fromUserId ? (
-                                                                    <img src={`/assets/images/${loginUser.path}`} className="rounded-full h-10 w-10 object-cover" alt="" />
-                                                                ) : (
-                                                                    ''
-                                                                )}
-                                                                {selectedUser.userId !== message.fromUserId ? (
-                                                                    <img src={`/assets/images/${selectedUser.path}`} className="rounded-full h-10 w-10 object-cover" alt="" />
-                                                                ) : (
-                                                                    ''
-                                                                )}
-                                                            </div>
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div
-                                                                        className={`dark:bg-gray-800 p-4 py-2 rounded-md bg-black/10 ${
-                                                                            message.fromUserId === selectedUser.userId
-                                                                                ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white'
-                                                                                : 'ltr:rounded-bl-none rtl:rounded-br-none'
-                                                                        }`}
-                                                                    >
-                                                                        {message.text}
-                                                                    </div>
-                                                                    <div className={`${selectedUser.userId === message.fromUserId ? 'hidden' : ''}`}>
-                                                                        <svg
-                                                                            className="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary"
-                                                                            viewBox="0 0 24 24"
-                                                                            fill="none"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                        >
-                                                                            <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-                                                                            <path
-                                                                                d="M9 16C9.85038 16.6303 10.8846 17 12 17C13.1154 17 14.1496 16.6303 15 16"
-                                                                                stroke="currentColor"
-                                                                                strokeWidth="1.5"
-                                                                                strokeLinecap="round"
-                                                                            />
-                                                                            <path
-                                                                                d="M16 10.5C16 11.3284 15.5523 12 15 12C14.4477 12 14 11.3284 14 10.5C14 9.67157 14.4477 9 15 9C15.5523 9 16 9.67157 16 10.5Z"
-                                                                                fill="currentColor"
-                                                                            />
-                                                                            <ellipse cx="9" cy="10.5" rx="1" ry="1.5" fill="currentColor" />
-                                                                        </svg>
-                                                                    </div>
-                                                                </div>
-                                                                <div className={`text-xs text-white-dark ${selectedUser.userId === message.fromUserId ? 'ltr:text-right rtl:text-left' : ''}`}>
-                                                                    {message.time ? message.time : '5h ago'}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                {selectedUser.messages ? (
+                                    <>
+                                        {Object.keys(selectedUser.messages).map((date: any, index: any) => {
+                                            return (
+                                                <div key={index}>
+                                                    <div div className="block m-6 mt-0" >
+                                                        <h4 className="text-xs text-center border-b border-[#f4f4f4] dark:border-gray-800 relative">
+                                                            <span className="relative top-2 px-3 bg-white dark:bg-black">{date}</span>
+                                                        </h4>
                                                     </div>
-                                                );
-                                            })}
-                                        </>
-                                    ) : (
-                                        ''
-                                    )}
-                                </div>
+                                                    {
+                                                        <>
+                                                            {selectedUser.messages[date].map((message: any, index: any) => {
+                                                                <>
+                                                                    <Messages selectedUser={selectedUser} message={message} />
+                                                                </>
+                                                            })}
+                                                        </>
+                                                    }
+                                                </div>
+                                            );
+                                        })}
+                                    </>
+                                ) : (
+                                    <>
+                                        {console.log(selectedUser.messages.length)}
+                                    </>
+                                )}
                             </PerfectScrollbar>
                             <div className="p-4 absolute bottom-0 left-0 w-full">
                                 <div className="sm:flex w-full space-x-3 rtl:space-x-reverse items-center">
@@ -939,8 +756,8 @@ const Chat = () => {
                         ''
                     )}
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
