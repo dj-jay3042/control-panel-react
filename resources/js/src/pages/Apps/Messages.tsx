@@ -1,9 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const Messages = ({ selectedUser, message }) => {
+const Chats = ({ selectedUser, message, loginUser, index }) => {
+    const createMarkup = (text) => {
+        return { __html: text.replace(/\n/g, '<br>') };
+    };
+
     return (
-        <div className="space-y-5 p-4 sm:pb-0 pb-[68px] sm:min-h-[300px] min-h-[400px]" key={index}>
+        <div className="space-y-5 p-4 sm:pb-0 pb-[68px]" key={index}>
             <div className={`flex items-start gap-3 ${selectedUser.userId === message.fromUserId ? 'justify-end' : ''}`}>
                 <div className={`flex-none ${selectedUser.userId === message.fromUserId ? 'order-2' : ''}`}>
                     {selectedUser.userId === message.fromUserId ? (
@@ -24,8 +27,8 @@ const Messages = ({ selectedUser, message }) => {
                                 ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-primary text-white'
                                 : 'ltr:rounded-bl-none rtl:rounded-br-none'
                                 }`}
+                            dangerouslySetInnerHTML={createMarkup(message.text)}
                         >
-                            {message.text}
                         </div>
                         <div className={`${selectedUser.userId === message.fromUserId ? 'hidden' : ''}`}>
                             <svg
@@ -58,10 +61,19 @@ const Messages = ({ selectedUser, message }) => {
     );
 };
 
-// PropTypes for type checking
-Messages.propTypes = {
-    selectedUser: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
-};
+const Messages = ({ selectedUser, date }) => {
+    return (
+        <>
+            <div className="block m-6 mt-0">
+                <h4 className="text-xs text-center border-b border-[#f4f4f4] dark:border-gray-800 relative">
+                    <span className="relative top-2 px-3 bg-white dark:bg-black">{date}</span>
+                </h4>
+            </div>
+            {selectedUser.messages[date].map((message, index) => (
+                <Chats selectedUser={selectedUser} message={message} key={index} loginUser={{ path: "/favicon.png" }} index={index} />
+            ))}
+        </>
+    );
+}
 
 export default Messages;

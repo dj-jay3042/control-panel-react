@@ -118,6 +118,12 @@ const Chat = () => {
         scrollToBottom();
         setIsShowChatMenu(false);
     };
+
+    const getCurrentFormattedDate = () => {
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        return new Date().toLocaleDateString('en-GB', options).replace(/ 20/g, ', 20');
+    }
+
     const sendMessage = async () => {
         if (textMessage.trim()) {
             let list = contactList;
@@ -128,13 +134,25 @@ const Chat = () => {
             };
             let response = await postRequest("/api/sendSms", messageData, {}, headers);
 
+            let date = getCurrentFormattedDate();
             if (response.status == "success") {
-                user.messages.push({
-                    fromUserId: selectedUser.userId,
-                    toUserId: 0,
-                    text: textMessage,
-                    time: 'Just now',
-                });
+                if (user.messages[date]) {
+                    user.messages[date].push({
+                        fromUserId: selectedUser.userId,
+                        toUserId: 0,
+                        text: textMessage,
+                        time: 'Just now',
+                    });
+                } else {
+                    user.messages[date] = [
+                        {
+                            fromUserId: selectedUser.userId,
+                            toUserId: 0,
+                            text: textMessage,
+                            time: 'Just now',
+                        }
+                    ];
+                }
                 setFilteredItems(list);
                 setTextMessage('');
                 scrollToBottom();
@@ -636,32 +654,16 @@ const Chat = () => {
                             <PerfectScrollbar className="relative h-full sm:h-[calc(100vh_-_300px)] chat-conversation-box">
                                 {selectedUser.messages ? (
                                     <>
-                                        {Object.keys(selectedUser.messages).map((date: any, index: any) => {
-                                            return (
-                                                <div key={index}>
-                                                    <div div className="block m-6 mt-0" >
-                                                        <h4 className="text-xs text-center border-b border-[#f4f4f4] dark:border-gray-800 relative">
-                                                            <span className="relative top-2 px-3 bg-white dark:bg-black">{date}</span>
-                                                        </h4>
-                                                    </div>
-                                                    {
-                                                        <>
-                                                            {selectedUser.messages[date].map((message: any, index: any) => {
-                                                                <>
-                                                                    <Messages selectedUser={selectedUser} message={message} />
-                                                                </>
-                                                            })}
-                                                        </>
-                                                    }
-                                                </div>
-                                            );
-                                        })}
+                                        {
+
+                                            Object.keys(selectedUser.messages).map((date: any, index: any) => {
+                                                return (
+                                                    <Messages selectedUser={selectedUser} date={date} key={index} />
+                                                );
+                                            })
+                                        }
                                     </>
-                                ) : (
-                                    <>
-                                        {console.log(selectedUser.messages.length)}
-                                    </>
-                                )}
+                                ) : ('')}
                             </PerfectScrollbar>
                             <div className="p-4 absolute bottom-0 left-0 w-full">
                                 <div className="sm:flex w-full space-x-3 rtl:space-x-reverse items-center">
