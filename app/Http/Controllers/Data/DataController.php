@@ -97,7 +97,7 @@ class DataController extends Controller
 
         $templateData = array(
             "name" => "Jay Chauhan",
-            "accountNumber" => "4949759876",
+            "accountNumber" => "KOTAK X 9876",
             "currentBalance" => $updatedBalance
         );
         // Send sms for update
