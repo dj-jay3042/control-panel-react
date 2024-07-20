@@ -25,7 +25,7 @@ class DataController extends Controller
                 "name" => $row->name,
                 "subject" => $row->subject,
                 "message" => $row->message,
-                "time" => date("d M, Y h:i:s a", strtotime($row->cTime . " + 9:30"))
+                "time" => date("d M, Y h:i:s a", strtotime($row->cTime . " + 9:30 hours"))
             );
             $return[] = $details;
         }
