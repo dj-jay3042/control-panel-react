@@ -19,16 +19,23 @@ class DataController extends Controller
         $return = array();
         $count = 0;
         foreach ($data as $row) {
-            echo "<pre>";
-            print_r($row);
-            die;
+
+            // Create a DateTime object for the input time in UTC
+            $utcTime = new DateTime($row->cTime, new DateTimeZone("UTC"));
+
+            // Convert the time to Indian Standard Time (IST)
+            $istTime = $utcTime->setTimezone(new DateTimeZone("Asia/Kolkata"));
+
+            // Format the IST time to the desired output format
+            $istTimeStr = $istTime->format("d M, Y h:i:s a");
+
             $details = array(
                 "id" => ++$count,
                 "email" => $row->email,
                 "name" => $row->name,
                 "subject" => $row->subject,
                 "message" => $row->message,
-                "time" => date("d M, Y h:i:s a", strtotime($row->cTime . " + 9:30 hours"))
+                "time" => $istTimeStr
             );
             $return[] = $details;
         }
