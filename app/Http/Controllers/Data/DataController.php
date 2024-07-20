@@ -19,6 +19,9 @@ class DataController extends Controller
         $return = array();
         $count = 0;
         foreach ($data as $row) {
+            echo "<pre>";
+            print_r($row);
+            die;
             $details = array(
                 "id" => ++$count,
                 "email" => $row->email,
