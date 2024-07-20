@@ -23,6 +23,7 @@ class DataController extends Controller
                 "id" => ++$count,
                 "email" => $row->email,
                 "name" => $row->name,
+                "subject" => $row->subject,
                 "message" => $row->message,
                 "time" => date("d M, Y h:i:s a", strtotime($row->cTime . " + 9:30"))
             );
